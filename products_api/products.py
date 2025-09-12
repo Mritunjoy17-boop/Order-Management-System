@@ -40,7 +40,7 @@ async def user_products(data: ProductsRequest, db=Depends(connect_db), token : s
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
         db_cursor.execute(
-            "SELECT product_picture,product_name,product_category FROM products WHERE product_category = %s",
+            "SELECT product_picture,product_name,product_category,product_primary_unit,product_secondary_unit FROM products WHERE product_category = %s",
             (data.product_category,)
         )
         query_data = db_cursor.fetchall()
