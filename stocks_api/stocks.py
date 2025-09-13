@@ -15,7 +15,8 @@ app = FastAPI()
 
 #pydantic models
 class StocksRequest(BaseModel):
-    moulder_id : str,
+    product_code : str
+    moulder_id : str
     current_godown : str
 
 class StocksResponse(BaseModel):
