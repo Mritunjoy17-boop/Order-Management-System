@@ -51,6 +51,7 @@ async def user_stocks(data: StocksMovementRequest, db=Depends(connect_db), token
         barcode_id = data.barcode_id
         movement_type = data.movement_type
         datetime_obj = datetime.now()
+        comments = data.comments
         datetime_timestamp = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
 
         db_cursor.execute(
