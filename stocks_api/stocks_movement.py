@@ -16,10 +16,10 @@ app = FastAPI()
 
 #pydantic models
 class StocksMovementRequest(BaseModel):
-    batch_id : str
+    batch_id : str | None
     godown_id : str
     product_code : str
-    barcode_id : str
+    barcode_id : str | None
     movement_type : str
     comments : str | None = None
 
