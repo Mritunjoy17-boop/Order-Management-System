@@ -1,5 +1,6 @@
 import os
 import sys
+from datetime import datetime
 from pydantic import BaseModel
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
@@ -15,7 +16,12 @@ app = FastAPI()
 
 #pydantic models
 class StocksMovementRequest(BaseModel):
+    batch_id : str
+    godown_id : str
+    product_code : str
     barcode_id : str
+    movement_type : str
+    comments : str | None = None
 
 class StocksMovementResponse(BaseModel):
     message : dict
@@ -39,27 +45,25 @@ async def user_stocks(data: StocksMovementRequest, db=Depends(connect_db), token
     )
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
+        batch_id = data.batch_id
+        godown_id = data.godown_id
+        product_code = data.product_code
         barcode_id = data.barcode_id
+        movement_type = data.movement_type
+        datetime_obj = datetime.now()
+        datetime_timestamp = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
 
         db_cursor.execute(
-            "SELECT record_id,batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp FROM stock_movement WHERE barcode_id =%s",
-            (barcode_id,)
+            "INSERT INTO stock_movement(batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp)VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",
+            (batch_id,godown_id,product_code,barcode_id,movement_type,datetime_timestamp)
         )
-        stocks_movement_query_data = db_cursor.fetchall()
-        if stocks_movement_query_data:
-            stocks_movement_list = []
-            for stocks_movement_dict in stocks_movement_query_data:
-                stocks_movement_list.append(stocks_movement_dict)
-
-            success_message = f"Stocks movement data found successfully"
+        db.commit()
+        if db_cursor.rowcount > 0:
+            success_message = f"Stocks movement data inserted successfully"
             db_cursor.close()
 
-            return_dict = {
-                "stocks_movement_data" : stocks_movement_list
-            }
-
             json_response = {
-                "msg": success_message,"status":"Success","data":return_dict
+                "msg": success_message,"status":"Success","data":{}
             }
 
             return {"message": json_response}
