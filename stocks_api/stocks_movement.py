@@ -55,7 +55,7 @@ async def user_stocks(data: StocksMovementRequest, db=Depends(connect_db), token
 
         db_cursor.execute(
             "INSERT INTO stock_movement(batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp)VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",
-            (batch_id,godown_id,product_code,barcode_id,movement_type,datetime_timestamp)
+            (batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp)
         )
         db.commit()
         if db_cursor.rowcount > 0:
