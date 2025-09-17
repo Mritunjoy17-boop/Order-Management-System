@@ -46,9 +46,13 @@ async def user_stocks(data: StocksMovementRequest, db=Depends(connect_db), token
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
         batch_id = data.batch_id
+        if batch_id == '':
+            batch_id = None
         godown_id = data.godown_id
         product_code = data.product_code
         barcode_id = data.barcode_id
+        if barcode_id:
+            barcode_id = None
         movement_type = data.movement_type
         datetime_obj = datetime.now()
         comments = data.comments
