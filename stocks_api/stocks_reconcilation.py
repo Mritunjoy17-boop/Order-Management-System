@@ -59,7 +59,7 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
             }
 
             json_response = {
-                "msg": success_message,"status":"Success","data":{return_dict}
+                "msg": success_message,"status":"Success","data":return_dict
             }
 
             return {"message": json_response}
