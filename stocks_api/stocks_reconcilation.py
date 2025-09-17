@@ -50,6 +50,7 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
         )
         stock_reconcilation_data = db_cursor.fetchall()
         if stock_reconcilation_data:
+            print(stock_reconcilation_data)
             success_message = f"Stocks reconcilation data found successfully"
             db_cursor.close()
 
