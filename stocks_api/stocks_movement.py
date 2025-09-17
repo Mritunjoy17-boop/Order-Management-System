@@ -51,8 +51,6 @@ async def user_stocks(data: StocksMovementRequest, db=Depends(connect_db), token
         godown_id = data.godown_id
         product_code = data.product_code
         barcode_id = data.barcode_id
-        if barcode_id:
-            barcode_id = None
         movement_type = data.movement_type
         datetime_obj = datetime.now()
         comments = data.comments
