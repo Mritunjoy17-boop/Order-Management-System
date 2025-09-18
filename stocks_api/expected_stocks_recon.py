@@ -85,7 +85,7 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
             expected_data_list = outward_reconcilation_data
             
         if expected_data_list:
-            success_message = f"Expected data of stocks reconcilation data found successfully"
+            success_message = f"Expected data of stocks reconcilation found successfully"
             db_cursor.close()
 
             return_dict = {
