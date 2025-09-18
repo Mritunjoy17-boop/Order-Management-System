@@ -63,35 +63,36 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
         # excepted_product_count = int(inward_reconcilation_data[0]['movement_count']) - int(outward_reconcilation_data[0]['movement_count'])
         # print(excepted_product_count)
 
+        expected_data_list = []
         if inward_reconcilation_data and outward_reconcilation_data:
             print(123)
         elif inward_reconcilation_data:
             print(456)
+            expected_data_list = inward_reconcilation_data
         elif outward_reconcilation_data:
             print(789)
+            expected_data_list = inward_reconcilation_data
             
-        # if stock_reconcilation_data:
-        #     print(stock_reconcilation_data)
+        if expected_data_list:
+            success_message = f"Expected data of stocks reconcilation data found successfully"
+            db_cursor.close()
 
-        #     success_message = f"Stocks reconcilation data found successfully"
-        #     db_cursor.close()
+            return_dict = {
+                "reconcilation_data" : expected_data_list
+            }
 
-        #     return_dict = {
-        #         "reconcilation_data" : stock_reconcilation_data
-        #     }
+            json_response = {
+                "msg": success_message,"status":"Success","data":return_dict
+            }
 
-        #     json_response = {
-        #         "msg": success_message,"status":"Success","data":return_dict
-        #     }
-
-        #     return {"message": json_response}
-        # else:
-        #     db_cursor.close()
-        #     failure_msg = "Invalid godown id and category id"
-        #     failure_response = {
-        #         "msg": failure_msg,"status":"Failure","data":{}
-        #     }
-        #     return {"message": failure_response}
+            return {"message": json_response}
+        else:
+            db_cursor.close()
+            failure_msg = "Invalid godown id and category id"
+            failure_response = {
+                "msg": failure_msg,"status":"Failure","data":{}
+            }
+            return {"message": failure_response}
     else:
         db_cursor.close()
         failure_msg = "Token not valid, login again"
