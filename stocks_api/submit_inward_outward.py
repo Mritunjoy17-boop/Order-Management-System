@@ -38,7 +38,7 @@ def get_tokens(authorization : str = Header(...)):
     return token
 
 @app.post("/", response_model=StocksMovementResponse)
-async def user_stock_movement(data: dict = List[StocksMovementRequest], db=Depends(connect_db), token: str = Depends(get_tokens)):
+async def user_stock_movement(data: dict = list[StocksMovementRequest], db=Depends(connect_db), token: str = Depends(get_tokens)):
     db_cursor = db.cursor(dictionary=True)
     db_cursor.execute(
         "SELECT jwt_status FROM user_jwt WHERE jwt_token =%s",
