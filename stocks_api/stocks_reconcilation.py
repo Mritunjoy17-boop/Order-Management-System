@@ -67,21 +67,19 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
         if inward_reconcilation_data and outward_reconcilation_data:
             print(123)
 
-            product_inward_list = []
-            product_outward_list = []
-            for inward_data in inward_reconcilation_data:
-                product_inward_list.append(inward_data['product_code'])
+            product_inward_dict = {}
+            for inward_data in inward_reconcilation_data
+                product_inward_dict[inward_data['product_code']] = inward_data
 
-            for outward_data in outward_reconcilation_data:
-                product_outward_list.append(outward_data['product_code'])
+            product_outward_dict = {}
+            for outward_data in outward_reconcilation_data
+                product_outward_dict[outward_data['product_code']] = outward_data
 
-            print(product_inward_list,product_outward_list)
+            print(product_inward_dict,product_outward_dict)
 
         elif inward_reconcilation_data:
-            print(456)
             expected_data_list = inward_reconcilation_data
         elif outward_reconcilation_data:
-            print(789)
             expected_data_list = outward_reconcilation_data
             
         # if expected_data_list:
