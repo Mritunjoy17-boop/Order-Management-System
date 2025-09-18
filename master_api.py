@@ -7,7 +7,7 @@ from godown_api.godown import app as godown_app
 from moulder_api.moulder import app as moulder_app
 from units_api.units import app as units_app
 from stocks_api.stocks import app as stocks_app
-from stocks_api.submit_inward_ourward import app as submit_inward_ourward_app
+from stocks_api.submit_inward_outward import app as submit_inward_outward_app
 from logout_api.logout import app as logout_app
 
 app = FastAPI()
@@ -20,5 +20,5 @@ app.mount("/godown", godown_app)
 app.mount("/moulder", moulder_app)
 app.mount("/units", units_app)
 app.mount("/stocks", stocks_app)
-app.mount("/submit_inward_ourward", submit_inward_ourward_app)
+app.mount("/submit_inward_outward", submit_inward_outward_app)
 app.mount("/logout", logout_app)
