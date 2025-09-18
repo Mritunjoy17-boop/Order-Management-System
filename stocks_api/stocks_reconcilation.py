@@ -50,7 +50,6 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
             (godown_id,category_id)
         )
         inward_reconcilation_data = db_cursor.fetchall()
-        print(inward_reconcilation_data)
 
         #outward query
         db_cursor.execute(
@@ -58,15 +57,9 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
             (godown_id,category_id)
         )
         outward_reconcilation_data = db_cursor.fetchall()
-        print(outward_reconcilation_data)
-
-        # excepted_product_count = int(inward_reconcilation_data[0]['product_count']) - int(outward_reconcilation_data[0]['product_count'])
-        # print(excepted_product_count)
 
         expected_data_list = []
         if inward_reconcilation_data and outward_reconcilation_data:
-            print(123)
-
             product_inward_dict = {}
             for inward_data in inward_reconcilation_data:
                 product_inward_dict[inward_data['product_code']] = inward_data
@@ -76,6 +69,9 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
                 product_outward_dict[outward_data['product_code']] = outward_data
 
             print(product_inward_dict,product_outward_dict)
+
+            all_keys = product_inward_dict.keys() | product_outward_dict.keys()
+            print(all_keys)
 
         elif inward_reconcilation_data:
             expected_data_list = inward_reconcilation_data
