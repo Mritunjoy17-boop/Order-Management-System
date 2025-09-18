@@ -47,7 +47,8 @@ async def user_stock_movement(data: List[StocksMovementRequest], db=Depends(conn
     )
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
-        print(data)
+        inward_outward_data = [obj.dict() for obj in data]
+        print(inward_outward_data)
 
         # batch_id = data.get('batch_id')
         # if batch_id == '':
