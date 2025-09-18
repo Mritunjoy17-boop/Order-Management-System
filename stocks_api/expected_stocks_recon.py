@@ -33,7 +33,7 @@ def get_tokens(authorization : str = Header(...)):
     return token
 
 @app.post("/", response_model=StocksReconcilationResponse)
-async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), token : str = Depends(get_tokens)):
+async def expected_stocks_reconcilation(data: StocksReconcilationRequest, db=Depends(connect_db), token : str = Depends(get_tokens)):
     db_cursor = db.cursor(dictionary=True)
     db_cursor.execute(
         "SELECT jwt_status FROM user_jwt WHERE jwt_token =%s",
