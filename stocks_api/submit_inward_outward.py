@@ -48,40 +48,50 @@ async def user_stock_movement(data: List[StocksMovementRequest], db=Depends(conn
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
         inward_outward_data = [obj.dict() for obj in data]
-        print(inward_outward_data)
 
-        # batch_id = data.get('batch_id')
-        # if batch_id == '':
-        #     batch_id = None
-        # godown_id = data.get('godown_id')
-        # product_code = data.get('product_code')
-        # barcode_id = data.get('barcode_id')
-        # movement_type = data.get('movement_type')
-        # comments = data.get('comments')
-        # datetime_obj = datetime.now()
-        # datetime_timestamp = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+        success_flag = 0
+        try:
+            for movement_data in inward_outward_data:
+                batch_id = movement_data.get('batch_id')
+                if batch_id == '':
+                    batch_id = None
+                godown_id = movement_data.get('godown_id')
+                product_code = movement_data.get('product_code')
+                barcode_id = movement_data.get('barcode_id')
+                movement_type = movement_data.get('movement_type')
+                comments = movement_data.get('comments')
+                datetime_obj = datetime.now()
+                datetime_timestamp = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+                product_count = int(movement_data.get('product_count'))
 
-        # db_cursor.execute(
-        #     "INSERT INTO stock_movement(batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp)VALUES(%s,%s,%s,%s,%s,%s,%s)",
-        #     (batch_id, godown_id, product_code, barcode_id, movement_type, comments, datetime_timestamp)
-        # )
-        # db.commit()
-        # if db_cursor.rowcount > 0:
-        #     success_message = f"Stocks movement data inserted successfully"
-        #     db_cursor.close()
+                for _ in range(0,product_count):
+                    db_cursor.execute(
+                        "INSERT INTO stock_movement(batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp)VALUES(%s,%s,%s,%s,%s,%s,%s)",
+                        (batch_id, godown_id, product_code, barcode_id, movement_type, comments, datetime_timestamp)
+                    )
+                    db.commit()
+        except Exception as e:
+            final_message = f"Error occured : {e}"
+        else:
+            final_message = f"Inward/Outward data inserted successfully"
+            success_flag = 1
 
-        #     json_response = {
-        #         "msg": success_message, "status": "Success", "data": {}
-        #     }
+        if success_flag:
+            success_message = f"Stocks movement data inserted successfully"
+            db_cursor.close()
 
-        #     return {"message": json_response}
-        # else:
-        #     db_cursor.close()
-        #     failure_msg = "Invalid barcode id"
-        #     failure_response = {
-        #         "msg": failure_msg, "status": "Failure", "data": {}
-        #     }
-        #     return {"message": failure_response}
+            json_response = {
+                "msg": success_message, "status": "Success", "data": {}
+            }
+
+            return {"message": json_response}
+        else:
+            db_cursor.close()
+            failure_msg = final_message
+            failure_response = {
+                "msg": failure_msg, "status": "Failure", "data": {}
+            }
+            return {"message": failure_response}
     else:
         db_cursor.close()
         failure_msg = "Token not valid, login again"
