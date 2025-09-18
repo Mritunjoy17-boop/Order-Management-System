@@ -8,7 +8,7 @@ from moulder_api.moulder import app as moulder_app
 from units_api.units import app as units_app
 from stocks_api.stocks import app as stocks_app
 from stocks_api.submit_inward_outward import app as submit_inward_outward_app
-from stocks_api.stocks_reconcilation import app as stocks_reconcilation_app
+from stocks_api.expected_stocks_recon import app as expected_stocks_recon_app
 from logout_api.logout import app as logout_app
 
 app = FastAPI()
@@ -22,5 +22,5 @@ app.mount("/moulder", moulder_app)
 app.mount("/units", units_app)
 app.mount("/stocks", stocks_app)
 app.mount("/submit_inward_outward", submit_inward_outward_app)
-app.mount("/stocks_reconcilation", stocks_reconcilation_app)
+app.mount("/expected_stocks_recon", expected_stocks_recon_app)
 app.mount("/logout", logout_app)
