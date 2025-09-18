@@ -35,7 +35,7 @@ def get_tokens(authorization : str = Header(...)):
     return token
 
 @app.post("/", response_model=VarianceResponse)
-async def variance_stocks_reconcilation(data: List(VarianceRequest), db=Depends(connect_db), token : str = Depends(get_tokens)):
+async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(connect_db), token : str = Depends(get_tokens)):
     db_cursor = db.cursor(dictionary=True)
     db_cursor.execute(
         "SELECT jwt_status FROM user_jwt WHERE jwt_token =%s",
