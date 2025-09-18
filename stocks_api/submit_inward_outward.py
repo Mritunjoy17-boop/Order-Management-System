@@ -15,14 +15,14 @@ from db_config import connect_db
 app = FastAPI()
 
 #pydantic models
-# class StocksMovementRequest(BaseModel):
-#     batch_id : str | None
-#     godown_id : str
-#     product_code : str
-#     barcode_id : str | None
-#     movement_type : str
-#     comments : str | None = None
-#     product_count : str
+class StocksMovementRequest(BaseModel):
+    batch_id : str | None
+    godown_id : str
+    product_code : str
+    barcode_id : str | None
+    movement_type : str
+    comments : str | None = None
+    product_count : str
 
 class StocksMovementResponse(BaseModel):
     message : dict
@@ -38,7 +38,7 @@ def get_tokens(authorization : str = Header(...)):
     return token
 
 @app.post("/", response_model=StocksMovementResponse)
-async def user_stock_movement(data: dict = Body(...), db=Depends(connect_db), token: str = Depends(get_tokens)):
+async def user_stock_movement(data: dict = List(StocksMovementRequest), db=Depends(connect_db), token: str = Depends(get_tokens)):
     db_cursor = db.cursor(dictionary=True)
     db_cursor.execute(
         "SELECT jwt_status FROM user_jwt WHERE jwt_token =%s",
