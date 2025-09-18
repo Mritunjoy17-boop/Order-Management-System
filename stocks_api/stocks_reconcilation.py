@@ -60,9 +60,16 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
         outward_reconcilation_data = db_cursor.fetchall()
         print(outward_reconcilation_data)
 
-        excepted_product_count = int(inward_reconcilation_data[0]['movement_count']) - int(outward_reconcilation_data[0]['movement_count'])
-        print(excepted_product_count)
-        
+        # excepted_product_count = int(inward_reconcilation_data[0]['movement_count']) - int(outward_reconcilation_data[0]['movement_count'])
+        # print(excepted_product_count)
+
+        if inward_reconcilation_data and outward_reconcilation_data:
+            print(123)
+        elif inward_reconcilation_data:
+            print(456)
+        elif outward_reconcilation_data:
+            print(789)
+            
         # if stock_reconcilation_data:
         #     print(stock_reconcilation_data)
 
