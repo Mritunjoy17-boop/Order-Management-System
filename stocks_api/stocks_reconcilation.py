@@ -46,7 +46,7 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
 
         #inward query
         db_cursor.execute(
-            "SELECT prod.product_name, prod.product_code, COUNT(sm.record_id) AS movement_count FROM stock_movement sm INNER JOIN products prod ON sm.product_code = prod.product_code INNER JOIN category cat ON prod.product_category = cat.category_id WHERE sm.godown_id =%s AND sm.movement_type = 'inward' AND cat.category_id =%s GROUP BY prod.product_code, prod.product_name",
+            "SELECT prod.product_name, prod.product_code, COUNT(sm.record_id) AS product_count FROM stock_movement sm INNER JOIN products prod ON sm.product_code = prod.product_code INNER JOIN category cat ON prod.product_category = cat.category_id WHERE sm.godown_id =%s AND sm.movement_type = 'inward' AND cat.category_id =%s GROUP BY prod.product_code, prod.product_name",
             (godown_id,category_id)
         )
         inward_reconcilation_data = db_cursor.fetchall()
@@ -54,13 +54,13 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
 
         #outward query
         db_cursor.execute(
-            "SELECT prod.product_name, prod.product_code, COUNT(sm.record_id) AS movement_count FROM stock_movement sm INNER JOIN products prod ON sm.product_code = prod.product_code INNER JOIN category cat ON prod.product_category = cat.category_id WHERE sm.godown_id =%s AND sm.movement_type = 'outward' AND cat.category_id =%s GROUP BY prod.product_code, prod.product_name",
+            "SELECT prod.product_name, prod.product_code, COUNT(sm.record_id) AS product_count FROM stock_movement sm INNER JOIN products prod ON sm.product_code = prod.product_code INNER JOIN category cat ON prod.product_category = cat.category_id WHERE sm.godown_id =%s AND sm.movement_type = 'outward' AND cat.category_id =%s GROUP BY prod.product_code, prod.product_name",
             (godown_id,category_id)
         )
         outward_reconcilation_data = db_cursor.fetchall()
         print(outward_reconcilation_data)
 
-        # excepted_product_count = int(inward_reconcilation_data[0]['movement_count']) - int(outward_reconcilation_data[0]['movement_count'])
+        # excepted_product_count = int(inward_reconcilation_data[0]['product_count']) - int(outward_reconcilation_data[0]['product_count'])
         # print(excepted_product_count)
 
         expected_data_list = []
