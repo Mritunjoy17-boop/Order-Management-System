@@ -79,34 +79,31 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
                     expected_data_list.append(product_inward_dict[key].copy())
                 else:
                     expected_data_list.append(product_outward_dict[key].copy())
-
         elif inward_reconcilation_data:
             expected_data_list = inward_reconcilation_data
         elif outward_reconcilation_data:
             expected_data_list = outward_reconcilation_data
-
-        print(expected_data_list)
             
-        # if expected_data_list:
-        #     success_message = f"Expected data of stocks reconcilation data found successfully"
-        #     db_cursor.close()
+        if expected_data_list:
+            success_message = f"Expected data of stocks reconcilation data found successfully"
+            db_cursor.close()
 
-        #     return_dict = {
-        #         "reconcilation_data" : expected_data_list
-        #     }
+            return_dict = {
+                "expected_reconcilation_data" : expected_data_list
+            }
 
-        #     json_response = {
-        #         "msg": success_message,"status":"Success","data":return_dict
-        #     }
+            json_response = {
+                "msg": success_message,"status":"Success","data":return_dict
+            }
 
-        #     return {"message": json_response}
-        # else:
-        #     db_cursor.close()
-        #     failure_msg = "Invalid godown id and category id"
-        #     failure_response = {
-        #         "msg": failure_msg,"status":"Failure","data":{}
-        #     }
-        #     return {"message": failure_response}
+            return {"message": json_response}
+        else:
+            db_cursor.close()
+            failure_msg = "No expected data found for reconcilation"
+            failure_response = {
+                "msg": failure_msg,"status":"Failure","data":{}
+            }
+            return {"message": failure_response}
     else:
         db_cursor.close()
         failure_msg = "Token not valid, login again"
