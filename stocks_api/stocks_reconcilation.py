@@ -44,32 +44,44 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
         godown_id = data.godown_id
         category_id = data.category_id
 
+        #inward query
         db_cursor.execute(
-            "SELECT prod.product_name, prod.product_code, COUNT(sm.record_id) AS movement_count FROM stock_movement sm INNER JOIN products prod ON sm.product_code = prod.product_code INNER JOIN category cat ON prod.product_category = cat.category_id WHERE sm.godown_id =%s AND cat.category_id =%s GROUP BY prod.product_code, prod.product_name",
+            "SELECT prod.product_name, prod.product_code, COUNT(sm.record_id) AS movement_count FROM stock_movement sm INNER JOIN products prod ON sm.product_code = prod.product_code INNER JOIN category cat ON prod.product_category = cat.category_id WHERE sm.godown_id =%s AND sm.movement_type = 'inward' AND cat.category_id =%s GROUP BY prod.product_code, prod.product_name",
             (godown_id,category_id)
         )
-        stock_reconcilation_data = db_cursor.fetchall()
-        if stock_reconcilation_data:
-            print(stock_reconcilation_data)
-            success_message = f"Stocks reconcilation data found successfully"
-            db_cursor.close()
+        inward_reconcilation_data = db_cursor.fetchall()
+        print(inward_reconcilation_data)
 
-            return_dict = {
-                "reconcilation_data" : stock_reconcilation_data
-            }
+        #outward query
+        db_cursor.execute(
+            "SELECT prod.product_name, prod.product_code, COUNT(sm.record_id) AS movement_count FROM stock_movement sm INNER JOIN products prod ON sm.product_code = prod.product_code INNER JOIN category cat ON prod.product_category = cat.category_id WHERE sm.godown_id =%s AND sm.movement_type = 'outward' AND cat.category_id =%s GROUP BY prod.product_code, prod.product_name",
+            (godown_id,category_id)
+        )
+        outward_reconcilation_data = db_cursor.fetchall()
+        print(outward_reconcilation_data)
 
-            json_response = {
-                "msg": success_message,"status":"Success","data":return_dict
-            }
+        # if stock_reconcilation_data:
+        #     print(stock_reconcilation_data)
 
-            return {"message": json_response}
-        else:
-            db_cursor.close()
-            failure_msg = "Invalid godown id and category id"
-            failure_response = {
-                "msg": failure_msg,"status":"Failure","data":{}
-            }
-            return {"message": failure_response}
+        #     success_message = f"Stocks reconcilation data found successfully"
+        #     db_cursor.close()
+
+        #     return_dict = {
+        #         "reconcilation_data" : stock_reconcilation_data
+        #     }
+
+        #     json_response = {
+        #         "msg": success_message,"status":"Success","data":return_dict
+        #     }
+
+        #     return {"message": json_response}
+        # else:
+        #     db_cursor.close()
+        #     failure_msg = "Invalid godown id and category id"
+        #     failure_response = {
+        #         "msg": failure_msg,"status":"Failure","data":{}
+        #     }
+        #     return {"message": failure_response}
     else:
         db_cursor.close()
         failure_msg = "Token not valid, login again"
