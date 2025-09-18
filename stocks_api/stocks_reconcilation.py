@@ -68,11 +68,11 @@ async def user_stocks(data: StocksReconcilationRequest, db=Depends(connect_db), 
             print(123)
 
             product_inward_dict = {}
-            for inward_data in inward_reconcilation_data
+            for inward_data in inward_reconcilation_data:
                 product_inward_dict[inward_data['product_code']] = inward_data
 
             product_outward_dict = {}
-            for outward_data in outward_reconcilation_data
+            for outward_data in outward_reconcilation_data:
                 product_outward_dict[outward_data['product_code']] = outward_data
 
             print(product_inward_dict,product_outward_dict)
