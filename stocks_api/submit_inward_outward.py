@@ -20,10 +20,9 @@ class StocksMovementRequest(BaseModel):
     batch_id : str | None
     godown_id : str
     product_code : str
-    barcode_id : str | None
+    barcode_id : str
     movement_type : str
     comments : str | None = None
-    product_count : str
 
 class StocksMovementResponse(BaseModel):
     message : dict
@@ -62,14 +61,12 @@ async def submit_inward_outward(data: List[StocksMovementRequest], db=Depends(co
                 comments = movement_data.get('comments')
                 datetime_obj = datetime.now()
                 datetime_timestamp = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
-                product_count = int(movement_data.get('product_count'))
 
-                for _ in range(0,product_count):
-                    db_cursor.execute(
-                        "INSERT INTO stock_movement(batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp)VALUES(%s,%s,%s,%s,%s,%s,%s)",
-                        (batch_id, godown_id, product_code, barcode_id, movement_type, comments, datetime_timestamp)
-                    )
-                    db.commit()
+                db_cursor.execute(
+                    "INSERT INTO stock_movement(batch_id,godown_id,product_code,barcode_id,movement_type,comments,datetime_timestamp)VALUES(%s,%s,%s,%s,%s,%s,%s)",
+                    (batch_id, godown_id, product_code, barcode_id, movement_type, comments, datetime_timestamp)
+                )
+                db.commit()
         except Exception as e:
             final_message = f"Error occured : {e}"
         else:
