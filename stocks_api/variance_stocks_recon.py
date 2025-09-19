@@ -43,7 +43,13 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
     )
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
-        print(data)
+        actual_data_list = [actual_data.dict() for actual_data in data]
+        print(actual_data_list)
+
+        # for temp_actual_data in actual_data_list:
+        #     product_name = data.product_name
+        #     product_code = data.product_code
+        #     product_count = data.product_count        
 
         # godown_id = data.godown_id
         # category_id = data.category_id
