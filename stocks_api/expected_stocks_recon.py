@@ -50,7 +50,6 @@ async def expected_stocks_reconcilation(data: StocksReconcilationRequest, db=Dep
             (godown_id,category_id)
         )
         inward_reconcilation_data = db_cursor.fetchall()
-        print(inward_reconcilation_data)
 
         #outward query
         db_cursor.execute(
@@ -58,7 +57,6 @@ async def expected_stocks_reconcilation(data: StocksReconcilationRequest, db=Dep
             (godown_id,category_id)
         )
         outward_reconcilation_data = db_cursor.fetchall()
-        print(outward_reconcilation_data)
 
         expected_data_list = []
         if inward_reconcilation_data and outward_reconcilation_data:
