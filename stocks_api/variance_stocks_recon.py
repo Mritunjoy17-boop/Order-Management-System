@@ -67,8 +67,6 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
                         product_variance = '-' + str(product_variance)
                     else:
                         product_variance = str(product_variance).replace('-','+')
-                    
-                    print(product_code,expected_product_count,actual_product_count,product_variance)
 
                     #inserting data to stock_variance
                     db_cursor.execute(
@@ -83,12 +81,8 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
             success_message = f"Variance data of stocks reconcilation updated successfully"
             db_cursor.close()
 
-            return_dict = {
-                "variance_reconcilation_data" : variance_list
-            }
-
             json_response = {
-                "msg": success_message,"status":"Success","data":return_dict
+                "msg": success_message,"status":"Success","data":{}
             }
 
             return {"message": json_response}
