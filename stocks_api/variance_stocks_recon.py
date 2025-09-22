@@ -46,26 +46,26 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
         actual_data_list = [actual_data.dict() for actual_data in data]
             
         if actual_data_list:
-            variance_list = []
             for temp_data in actual_data_list:
-                temp_list_data = {
-                    'product_code' : temp_data['product_code'],
-                    'product_variance' : int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
-                }
-                variance_list.append(temp_list_data)
+                product_code = temp_data['product_code']
+                expected_product_count = temp_data['expected_product_count']
+                actual_product_count = temp_data['actual_product_count']
+                product_variance = int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
+                
+                print(product_code,expected_product_count,actual_product_count,product_variance)
 
-            success_message = f"Variance data of stocks reconcilation found successfully"
-            db_cursor.close()
+            # success_message = f"Variance data of stocks reconcilation found successfully"
+            # db_cursor.close()
 
-            return_dict = {
-                "variance_reconcilation_data" : variance_list
-            }
+            # return_dict = {
+            #     "variance_reconcilation_data" : variance_list
+            # }
 
-            json_response = {
-                "msg": success_message,"status":"Success","data":return_dict
-            }
+            # json_response = {
+            #     "msg": success_message,"status":"Success","data":return_dict
+            # }
 
-            return {"message": json_response}
+            # return {"message": json_response}
         else:
             db_cursor.close()
             failure_msg = "No expected data found for reconcilation variance"
