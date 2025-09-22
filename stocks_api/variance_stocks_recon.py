@@ -17,7 +17,6 @@ app = FastAPI()
 
 #pydantic models
 class VarianceRequest(BaseModel):
-    product_name : str
     product_code : str
     expected_product_count : str
     actual_product_count : str
@@ -50,7 +49,6 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
             variance_list = []
             for temp_data in actual_data_list:
                 temp_list_data = {
-                    'product_name' : temp_data['product_name'],
                     'product_code' : temp_data['product_code'],
                     'product_variance' : int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
                 }
