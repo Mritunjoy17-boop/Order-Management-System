@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 from datetime import datetime
@@ -12,6 +13,17 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 from db_config import connect_db
+
+# Define log file path
+log_file = os.path.expanduser("~/logs/app.log")
+
+# Configure logging
+logging.basicConfig(
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.ERROR
+)
 
 app = FastAPI()
 
@@ -46,35 +58,40 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
         actual_data_list = [actual_data.dict() for actual_data in data]
         if actual_data_list:
             for temp_data in actual_data_list:
-                product_code = temp_data['product_code']
-                expected_product_count = temp_data['expected_product_count']
-                actual_product_count = temp_data['actual_product_count']
-                product_variance = int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
-                if int(expected_product_count) > int(actual_product_count):
-                    product_variance = '-' + str(product_variance)
-                else:
-                    product_variance = str(product_variance).replace('-','+')
-                
-                print(product_code,expected_product_count,actual_product_count,product_variance)
+                try:
+                    product_code = temp_data['product_code']
+                    expected_product_count = temp_data['expected_product_count']
+                    actual_product_count = temp_data['actual_product_count']
+                    product_variance = int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
+                    if int(expected_product_count) > int(actual_product_count):
+                        product_variance = '-' + str(product_variance)
+                    else:
+                        product_variance = str(product_variance).replace('-','+')
+                    
+                    print(product_code,expected_product_count,actual_product_count,product_variance)
 
-                #inserting data to stock_variance
-                # db_cursor.execute(
-                #     "INSERT INTO stock_variance(product_code,expected_count,actual_count,variance)VALUES(%s,%s,%s,%s);",
-                #     (product_code,expected_product_count,actual_product_count,product_variance)
-                # )
+                    #inserting data to stock_variance
+                    db_cursor.execute(
+                        "INSERT INTO stock_variance(product_code,expected_count,actual_count,variance)VALUES(%s,%s,%s,%s);",
+                        (product_code,expected_product_count,actual_product_count,product_variance)
+                    )
+                    db.commit()
+                except Exception as e:
+                    logging.error(f"Data not submitted for {product_code}", exc_info=True)
+                    continue
 
-            # success_message = f"Variance data of stocks reconcilation found successfully"
-            # db_cursor.close()
+            success_message = f"Variance data of stocks reconcilation updated successfully"
+            db_cursor.close()
 
-            # return_dict = {
-            #     "variance_reconcilation_data" : variance_list
-            # }
+            return_dict = {
+                "variance_reconcilation_data" : variance_list
+            }
 
-            # json_response = {
-            #     "msg": success_message,"status":"Success","data":return_dict
-            # }
+            json_response = {
+                "msg": success_message,"status":"Success","data":return_dict
+            }
 
-            # return {"message": json_response}
+            return {"message": json_response}
         else:
             db_cursor.close()
             failure_msg = "No expected data found for reconcilation variance"
