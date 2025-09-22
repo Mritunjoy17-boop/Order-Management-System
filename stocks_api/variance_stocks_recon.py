@@ -56,20 +56,18 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
                 }
                 variance_list.append(temp_list_data)
 
-            print(variance_list)
+            success_message = f"Variance data of stocks reconcilation found successfully"
+            db_cursor.close()
 
-            # success_message = f"Variance data of stocks reconcilation found successfully"
-            # db_cursor.close()
+            return_dict = {
+                "variance_reconcilation_data" : variance_list
+            }
 
-            # return_dict = {
-            #     "variance_reconcilation_data" : variance_list
-            # }
+            json_response = {
+                "msg": success_message,"status":"Success","data":return_dict
+            }
 
-            # json_response = {
-            #     "msg": success_message,"status":"Success","data":return_dict
-            # }
-
-            # return {"message": json_response}
+            return {"message": json_response}
         else:
             db_cursor.close()
             failure_msg = "No expected data found for reconcilation variance"
