@@ -52,7 +52,7 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
                 temp_list_data = {
                     'product_name' : temp_data['product_name'],
                     'product_code' : temp_data['product_code'],
-                    'product_variance' : temp_data['expected_product_count'] - temp_data['actual_product_count']
+                    'product_variance' : int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
                 }
                 variance_list.append(temp_list_data)
 
