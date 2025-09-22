@@ -74,6 +74,7 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
                     )
                     product_code_query = db_cursor.fetchone()
                     if product_code_query:
+                        print(123)
                         #updating data to stock_variance
                         db_cursor.execute(
                             "UPDATE stock_variance SET expected_count =%s,actual_count =%s, variance = NOW() WHERE product_code = %s",
@@ -81,6 +82,7 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
                         )
                         db.commit()
                     else:
+                        print(456)
                         #inserting data to stock_variance
                         db_cursor.execute(
                             "INSERT INTO stock_variance(product_code,expected_count,actual_count,variance)VALUES(%s,%s,%s,%s);",
