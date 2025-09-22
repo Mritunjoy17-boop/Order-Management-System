@@ -68,12 +68,25 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
                     else:
                         product_variance = str(product_variance).replace('-','+')
 
-                    #inserting data to stock_variance
                     db_cursor.execute(
-                        "INSERT INTO stock_variance(product_code,expected_count,actual_count,variance)VALUES(%s,%s,%s,%s);",
-                        (product_code,expected_product_count,actual_product_count,product_variance)
+                        "SELECT product_code FROM stock_variance WHERE product_code =%s;",
+                        (product_code,)
                     )
-                    db.commit()
+                    product_code_query = db_cursor.fetchone()
+                    if product_code_query:
+                        #updating data to stock_variance
+                        db_cursor.execute(
+                            "UPDATE stock_variance SET expected_count =%s,actual_count =%s, variance = NOW() WHERE product_code = %s",
+                            (expected_product_count,actual_product_count,product_code)
+                        )
+                        db.commit()
+                    else:
+                        #inserting data to stock_variance
+                        db_cursor.execute(
+                            "INSERT INTO stock_variance(product_code,expected_count,actual_count,variance)VALUES(%s,%s,%s,%s);",
+                            (product_code,expected_product_count,actual_product_count,product_variance)
+                        )
+                        db.commit()
                 except Exception as e:
                     logging.error(f"Data not submitted for {product_code}", exc_info=True)
                     continue
