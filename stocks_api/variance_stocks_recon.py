@@ -50,7 +50,7 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
                 expected_product_count = temp_data['expected_product_count']
                 actual_product_count = temp_data['actual_product_count']
                 product_variance = int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
-                if expected_product_count > actual_product_count:
+                if int(expected_product_count) > int(actual_product_count):
                     product_variance = '-' + str(product_variance)
                 else:
                     product_variance = str(product_variance).replace('-','+')
