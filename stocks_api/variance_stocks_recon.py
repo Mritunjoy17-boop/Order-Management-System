@@ -44,15 +44,24 @@ async def variance_stocks_reconcilation(data: List[VarianceRequest], db=Depends(
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
         actual_data_list = [actual_data.dict() for actual_data in data]
-            
         if actual_data_list:
             for temp_data in actual_data_list:
                 product_code = temp_data['product_code']
                 expected_product_count = temp_data['expected_product_count']
                 actual_product_count = temp_data['actual_product_count']
                 product_variance = int(temp_data['expected_product_count']) - int(temp_data['actual_product_count'])
+                if expected_product_count > actual_product_count:
+                    product_variance = '-' + str(product_variance)
+                else:
+                    product_variance = str(product_variance).replace('-','+')
                 
                 print(product_code,expected_product_count,actual_product_count,product_variance)
+
+                #inserting data to stock_variance
+                # db_cursor.execute(
+                #     "INSERT INTO stock_variance(product_code,expected_count,actual_count,variance)VALUES(%s,%s,%s,%s);",
+                #     (product_code,expected_product_count,actual_product_count,product_variance)
+                # )
 
             # success_message = f"Variance data of stocks reconcilation found successfully"
             # db_cursor.close()
