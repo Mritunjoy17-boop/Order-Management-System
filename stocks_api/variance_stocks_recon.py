@@ -19,7 +19,8 @@ app = FastAPI()
 class VarianceRequest(BaseModel):
     product_name : str
     product_code : str
-    product_count : str
+    expected_product_count : str
+    actual_product_count : str
 
 class VarianceResponse(BaseModel):
     message : dict
