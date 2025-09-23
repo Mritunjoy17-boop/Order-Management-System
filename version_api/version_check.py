@@ -49,8 +49,7 @@ async def user_products(data: VersionRequest, db=Depends(connect_db), token : st
             "SELECT app_version,app_version_type,app_url FROM app_version_check;",
         )
         verion_query_data = db_cursor.fetchall()
-        
-        if units_query_data:
+        if verion_query_data:
             print(verion_query_data)
 
         #     units_list = []
