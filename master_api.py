@@ -10,7 +10,7 @@ from stocks_api.stocks import app as stocks_app
 from stocks_api.submit_inward_outward import app as submit_inward_outward_app
 from stocks_api.expected_stocks_recon import app as expected_stocks_recon_app
 from stocks_api.variance_stocks_recon import app as variance_stocks_recon_app
-from version_api.version_check import add as version_check_app
+from version_api.version_check import app as version_check_app
 from logout_api.logout import app as logout_app
 
 app = FastAPI()
