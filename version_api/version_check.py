@@ -45,14 +45,14 @@ async def user_products(data: VersionRequest, db=Depends(connect_db), token : st
         version_type = data.version_type
         device_info = data.device_info
 
-        print(version,version_type,device_info)
+        db_cursor.execute(
+            "SELECT app_version,app_version_type,app_url FROM app_version_check;",
+        )
+        verion_query_data = db_cursor.fetchall()
+        
+        if units_query_data:
+            print(verion_query_data)
 
-        # db_cursor.execute(
-        #     "SELECT unit_name,unit_friendly_name,is_active FROM units WHERE unit_name =%s",
-        #     (unit_name,)
-        # )
-        # units_query_data = db_cursor.fetchall()
-        # if units_query_data:
         #     units_list = []
         #     for units_dict in units_query_data:
         #         units_list.append(units_dict)
