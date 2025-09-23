@@ -50,28 +50,24 @@ async def user_products(data: VersionRequest, db=Depends(connect_db), token : st
         )
         version_query_data = db_cursor.fetchone()
         if version_query_data:
-            print(version_query_data)
-
             is_update_required = False
-            if int(version.strip()) > int(version_query_data['app_version'].strip()):
+            if float(version.strip()) > float(version_query_data['app_version'].strip()):
                 is_update_required = True
 
-            print(is_update_required)
+            success_message = f"Version data found successfully"
+            db_cursor.close()
 
-            # success_message = f"Version data found successfully"
-            # db_cursor.close()
+            return_dict = {
+                "is_update_required" : is_update_required,
+                "app_url" : version_query_data['app_url'],
+                "is_sync_required" : False
+            }
 
-            # return_dict = {
-            #     "is_update_required" : is_update_required,
-            #     "app_url" : version_query_data['app_url'],
-            #     "is_sync_required" : False
-            # }
+            json_response = {
+                "msg": success_message,"status":"Success","data":return_dict
+            }
 
-            # json_response = {
-            #     "msg": success_message,"status":"Success","data":return_dict
-            # }
-
-            # return {"message": json_response}
+            return {"message": json_response}
         else:
             db_cursor.close()
             failure_msg = "No record of version exists"
