@@ -48,33 +48,37 @@ async def user_products(data: VersionRequest, db=Depends(connect_db), token : st
         db_cursor.execute(
             "SELECT app_version,app_version_type,app_url FROM app_version_check;",
         )
-        verion_query_data = db_cursor.fetchall()
-        if verion_query_data:
-            print(verion_query_data)
+        version_query_data = db_cursor.fetchone()
+        if version_query_data:
+            print(version_query_data)
 
-        #     units_list = []
-        #     for units_dict in units_query_data:
-        #         units_list.append(units_dict)
+            is_update_required = False
+            if int(version.strip()) > int(version_query_data['app_version'].strip()):
+                is_update_required = True
 
-        #     success_message = f"Units data found successfully"
-        #     db_cursor.close()
+            print(is_update_required)
 
-        #     return_dict = {
-        #         "units_data" : units_list
-        #     }
+            # success_message = f"Version data found successfully"
+            # db_cursor.close()
 
-        #     json_response = {
-        #         "msg": success_message,"status":"Success","data":return_dict
-        #     }
+            # return_dict = {
+            #     "is_update_required" : is_update_required,
+            #     "app_url" : version_query_data['app_url'],
+            #     "is_sync_required" : False
+            # }
 
-        #     return {"message": json_response}
-        # else:
-        #     db_cursor.close()
-        #     failure_msg = "Invalid unit name"
-        #     failure_response = {
-        #         "msg": failure_msg,"status":"Failure","data":{}
-        #     }
-        #     return {"message": failure_response}
+            # json_response = {
+            #     "msg": success_message,"status":"Success","data":return_dict
+            # }
+
+            # return {"message": json_response}
+        else:
+            db_cursor.close()
+            failure_msg = "No record of version exists"
+            failure_response = {
+                "msg": failure_msg,"status":"Failure","data":{}
+            }
+            return {"message": failure_response}
     else:
         db_cursor.close()
         failure_msg = "Token not valid, login again"
