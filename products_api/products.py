@@ -50,10 +50,9 @@ async def user_products(data: ProductsRequest, db=Depends(connect_db), token : s
             )
         query_data = db_cursor.fetchall()
         if query_data:
-            print(query_data)
-
             products_list = []
             for prod_dict in query_data:
+                print(prod_dict)
                 products_list.append(prod_dict)
 
             success_message = f"Products data found"
