@@ -54,6 +54,8 @@ async def user_products(data: ProductsRequest, db=Depends(connect_db), token : s
             for prod_dict in query_data:
                 products_list.append(prod_dict)
 
+            print(products_list)
+
             success_message = f"Products data found"
             db_cursor.close()
 
