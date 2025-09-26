@@ -52,7 +52,17 @@ async def user_products(data: ProductsRequest, db=Depends(connect_db), token : s
         if query_data:
             products_list = []
             for prod_dict in query_data:
-                print(prod_dict)
+
+                print(prod_dict) 
+
+                db_cursor.execute(
+                    "SELECT barcode_id,current_godown FROM stock WHERE product_code = %s",
+                    (prod_dict['product_code'],)
+                )
+                query_get_stock_data = db_cursor.fetchall()
+                if query_get_stock_data:
+                    print(query_get_stock_data)
+
                 products_list.append(prod_dict)
 
             success_message = f"Products data found"
