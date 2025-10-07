@@ -50,7 +50,7 @@ async def user_logout(db=Depends(connect_db), token : str = Depends(get_tokens))
         return {"message": json_response}
     else:
         db_cursor.close()
-        failure_msg = "Token not valid, login again"
+        failure_msg = "Token expired"
         failure_response = {
             "msg": failure_msg,"status":"Failure","data":{}
         }
