@@ -94,6 +94,7 @@ async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db
                 "is_active" : is_active,
             },
             "access_token": "Bearer " + access_token,
+            "device_id" : device_id,
             "token_type":"bearer"
         }
 
