@@ -1,5 +1,6 @@
 import os
 import sys
+import requests
 from pydantic import BaseModel
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
