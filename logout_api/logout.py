@@ -31,15 +31,15 @@ def get_tokens(authorization : str = Header(...)):
 async def user_logout(db=Depends(connect_db), token : str = Depends(get_tokens)):
     db_cursor = db.cursor(dictionary=True)
     db_cursor.execute(
-        "SELECT mobile_number,jwt_status FROM user_jwt WHERE jwt_token =%s",
+        "SELECT mobile_number,jwt_status FROM user_jwt WHERE jwt_token =%s",    
         (token,)
     )
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
         mobile_number = token_query['mobile_number']
         db_cursor.execute(
-            "UPDATE user_jwt SET jwt_status = 'invalid' WHERE mobile_number =%s",
-            (mobile_number,)
+            "UPDATE user_jwt SET jwt_status = 'invalid' WHERE mobile_number =%s and jwt_token = %s",
+            (mobile_number,token)
         )
         db.commit()
         db_cursor.close()
