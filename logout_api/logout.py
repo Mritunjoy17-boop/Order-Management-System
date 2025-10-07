@@ -55,7 +55,7 @@ async def user_logout(db=Depends(connect_db), token : str = Depends(get_tokens))
             "msg": failure_msg,"status":"Failure","data":{}
         }
 
-        return HTTPException(
+        raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
             detail = failure_response
         )
