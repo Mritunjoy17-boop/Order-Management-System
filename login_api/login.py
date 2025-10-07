@@ -24,7 +24,7 @@ class LoginResponse(BaseModel):
 
 @app.post("/", response_model=LoginResponse)
 async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db), device_id: str = Header(None)):
-    db_cursor = db.cursor(dictionary=True)
+    db_cursor = db.cursor(dictionary=True, buffered = True)
     db_cursor.execute(
         "SELECT mobile_number,password,user_name,user_type,is_active FROM users WHERE mobile_number=%s AND password=%s",
         (data.mobile_number, data.password)
