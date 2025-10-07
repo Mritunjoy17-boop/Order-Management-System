@@ -23,7 +23,7 @@ class LoginResponse(BaseModel):
     message : dict
 
 @app.post("/", response_model=LoginResponse)
-async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db), device_id: str = Header(None)):
+async def user_login(data: LoginRequest, db=Depends(connect_db)):
     db_cursor = db.cursor(dictionary=True, buffered = True)
     db_cursor.execute(
         "SELECT mobile_number,password,user_name,user_type,is_active FROM users WHERE mobile_number=%s AND password=%s",
@@ -51,36 +51,22 @@ async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db
             "user_type": user_type
         }
         access_token = create_access_token(token_data)
-        if not device_id:
-            device_id = f"device_{os.urandom(4).hex()}"
 
         #to check if data exists with a specific mobile number
         db_cursor.execute(
-            "SELECT mobile_number,device_id FROM user_jwt WHERE mobile_number =%s",
+            "SELECT mobile_number FROM user_jwt WHERE mobile_number =%s",
             (mobile_number, )
         )
-        token_query_result = db_cursor.fetchall()
+        token_query_result = db_cursor.fetchone()
         if token_query_result:
-            device_id_flag = 0
-            for list_item in token_query_result:
-                if list_item['device_id'] == device_id:
-                    device_id_flag = 1
-                    break
-
-            if device_id_flag:
-                db_cursor.execute(
-                    "UPDATE user_jwt SET jwt_token =%s, jwt_status = 'valid' WHERE mobile_number =%s and device_id = %s",
-                    (access_token, mobile_number, device_id)
-                )
-            else:
-                db_cursor.execute(
-                    "INSERT INTO user_jwt(mobile_number,jwt_token,jwt_status,device_id) VALUES(%s,%s,'valid',%s)",
-                    (mobile_number, access_token, device_id)
-                )    
+            db_cursor.execute(
+                "UPDATE user_jwt SET jwt_token =%s, jwt_status = 'valid' WHERE mobile_number =%s",
+                (access_token, mobile_number)
+            ) 
         else:
             db_cursor.execute(
-                "INSERT INTO user_jwt(mobile_number,jwt_token,jwt_status,device_id) VALUES(%s,%s,'valid',%s)",
-                (mobile_number, access_token, device_id)
+                "INSERT INTO user_jwt(mobile_number,jwt_token,jwt_status) VALUES(%s,%s,'valid')",
+                (mobile_number, access_token)
             )
 
         db.commit()
@@ -94,7 +80,6 @@ async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db
                 "is_active" : is_active,
             },
             "access_token": "Bearer " + access_token,
-            "device_id" : device_id,
             "token_type":"bearer"
         }
 

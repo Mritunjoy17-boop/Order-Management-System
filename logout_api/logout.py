@@ -28,7 +28,7 @@ def get_tokens(authorization : str = Header(...)):
     return token
 
 @app.get("/", response_model=LogoutResponse)
-async def user_logout(db=Depends(connect_db), token : str = Depends(get_tokens), device_id: str = Header(None)):
+async def user_logout(db=Depends(connect_db), token : str = Depends(get_tokens)):
     db_cursor = db.cursor(dictionary=True)
     db_cursor.execute(
         "SELECT mobile_number,jwt_status FROM user_jwt WHERE jwt_token =%s",    
@@ -37,8 +37,8 @@ async def user_logout(db=Depends(connect_db), token : str = Depends(get_tokens),
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
         db_cursor.execute(
-            "UPDATE user_jwt SET jwt_status = 'invalid' WHERE jwt_token =%s AND device_id=%s",
-            (token, device_id)
+            "UPDATE user_jwt SET jwt_status = 'invalid' WHERE jwt_token =%s",
+            (token,)
         )
         db.commit()
         db_cursor.close()
