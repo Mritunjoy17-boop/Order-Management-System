@@ -68,8 +68,6 @@ async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db
                     break
 
             if device_id_flag:
-                print(123)
-                
                 db_cursor.execute(
                     "UPDATE user_jwt SET jwt_token =%s, jwt_status = 'valid' WHERE mobile_number =%s and device_id = %s",
                     (access_token, mobile_number, device_id)
