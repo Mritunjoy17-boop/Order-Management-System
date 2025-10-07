@@ -72,8 +72,12 @@ async def user_products(data: UnitsRequest, db=Depends(connect_db), token : str 
             return {"message": failure_response}
     else:
         db_cursor.close()
-        failure_msg = "Token not valid, login again"
+        failure_msg = "Token expired"
         failure_response = {
             "msg": failure_msg,"status":"Failure","data":{}
         }
-        return {"message": failure_response}
+        
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = failure_response
+        )
