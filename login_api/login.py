@@ -52,6 +52,9 @@ async def user_login(data: LoginRequest, db=Depends(connect_db)):
         }
         access_token = create_access_token(token_data)
 
+        device_id = request.headers.get("Device-ID", f"device_{os.urandom(4).hex()}")
+        print(device_id)
+
         #to check if data exists with a specific mobile number
         db_cursor.execute(
             "SELECT mobile_number FROM user_jwt WHERE mobile_number =%s",
@@ -59,13 +62,15 @@ async def user_login(data: LoginRequest, db=Depends(connect_db)):
         )
         token_query_result = db_cursor.fetchone()
         if token_query_result:
+            print(token_query_result)
+            
                 db_cursor.execute(
                     "UPDATE user_jwt SET jwt_token =%s, jwt_status = 'valid' WHERE mobile_number =%s",
                     (access_token, mobile_number)
                 )
         else:
             db_cursor.execute(
-                "INSERT INTO user_jwt(mobile_number,jwt_token) VALUES(%s,%s)",
+                "INSERT INTO user_jwt(mobile_number,jwt_token) VALUES(%s,%s,%s)",
                 (mobile_number, access_token)
             )
 
