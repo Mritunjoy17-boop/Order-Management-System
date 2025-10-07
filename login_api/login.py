@@ -62,6 +62,15 @@ async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db
         token_query_result = db_cursor.fetchall()
         if token_query_result:
             print(token_query_result)
+            print(device_id)
+
+            device_id_flag = 0
+            for list_item in token_query_result:
+                if list_item['device_id'] == device_id:
+                    device_id_flag = 1
+                    break
+
+            print(device_id_flag)
 
             # if token_query_result.get('mobile_number','') and token_query_result.get('device_id',''):
             #     db_cursor.execute(
