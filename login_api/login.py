@@ -23,7 +23,7 @@ class LoginResponse(BaseModel):
     message : dict
 
 @app.post("/", response_model=LoginResponse)
-async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db)):
+async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db), device_id: str = Header(None)):
     db_cursor = db.cursor(dictionary=True)
     db_cursor.execute(
         "SELECT mobile_number,password,user_name,user_type,is_active FROM users WHERE mobile_number=%s AND password=%s",
@@ -51,7 +51,8 @@ async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db
             "user_type": user_type
         }
         access_token = create_access_token(token_data)
-        device_id = request.headers.get("Device-ID", f"device_{os.urandom(4).hex()}")
+        if not device_id:
+            device_id = f"device_{os.urandom(4).hex()}"
 
         #to check if data exists with a specific mobile number
         db_cursor.execute(
