@@ -57,8 +57,8 @@ async def user_login(data: LoginRequest, request: Request, db=Depends(connect_db
 
         #to check if data exists with a specific mobile number
         db_cursor.execute(
-            "SELECT mobile_number,device_id FROM user_jwt WHERE mobile_number =%s and device_id =%s",
-            (mobile_number, device_id)
+            "SELECT mobile_number,device_id FROM user_jwt WHERE mobile_number =%s",
+            (mobile_number, )
         )
         token_query_result = db_cursor.fetchone()
         if token_query_result:
