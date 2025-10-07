@@ -59,10 +59,18 @@ async def user_login(data: LoginRequest, db=Depends(connect_db)):
         )
         token_query_result = db_cursor.fetchone()
         if token_query_result:
-            db_cursor.execute(
-                "UPDATE user_jwt SET jwt_token =%s, jwt_status = 'valid' WHERE mobile_number =%s",
-                (access_token, mobile_number)
-            ) 
+            if token_query_result.get('jwt_status','') == 'valid':
+                db_cursor.close()
+                failure_msg = "User already logged in"
+                failure_response = {
+                    "msg": failure_msg,"status":"Failure","data":{}
+                }
+                return {"message": failure_response}
+            else:
+                db_cursor.execute(
+                    "UPDATE user_jwt SET jwt_token =%s, jwt_status = 'valid' WHERE mobile_number =%s",
+                    (access_token, mobile_number)
+                ) 
         else:
             db_cursor.execute(
                 "INSERT INTO user_jwt(mobile_number,jwt_token,jwt_status) VALUES(%s,%s,'valid')",
