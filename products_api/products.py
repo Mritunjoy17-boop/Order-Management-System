@@ -40,18 +40,29 @@ async def user_products(data: ProductsRequest, db=Depends(connect_db), token : s
     token_query = db_cursor.fetchone()
     if token_query and token_query['jwt_status'] == 'valid':
         if not data.product_category:
-            db_cursor.execute(
-                "SELECT product_code,product_picture,product_name,product_category,product_primary_unit,product_secondary_unit FROM products",
-            )
+            db_cursor.execute("""
+                SELECT 
+                    p.product_code,p.product_picture,p.product_name,p.product_category,c.category_name,
+                    p.product_primary_unit,p.product_secondary_unit,p.price_per_unit,p.unit_relation_pri_sec,p.sort_order
+                FROM products p
+                JOIN category c ON p.product_category = c.category_id
+            """)
         else:    
-            db_cursor.execute(
-                "SELECT product_code,product_picture,product_name,product_category,product_primary_unit,product_secondary_unit FROM products WHERE product_category = %s",
-                (data.product_category,)
-            )
+            db_cursor.execute("""
+                SELECT 
+                    p.product_code,p.product_picture,p.product_name,p.product_category,c.category_name,
+                    p.product_primary_unit,p.product_secondary_unit,p.price_per_unit,p.unit_relation_pri_sec,p.sort_order 
+                FROM products p
+                JOIN category c ON p.product_category = c.category_id 
+                WHERE p.product_category = %s
+            """,(data.product_category,))
+
         query_data = db_cursor.fetchall()
         if query_data:
+            BASE_URL = "http://orders.soni.in:8000"
             products_list = []
             for prod_dict in query_data:
+                prod_dict['product_picture'] = f"{BASE_URL}/{prod_dict['product_picture']}" if prod_dict['product_picture'] else ""
                 db_cursor.execute(
                     "SELECT barcode_id,current_godown FROM stock WHERE product_code = %s",
                     (prod_dict['product_code'],)
@@ -66,6 +77,7 @@ async def user_products(data: ProductsRequest, db=Depends(connect_db), token : s
             db_cursor.close()
 
             return_dict = {
+                "number_of_products": len(products_list),
                 "products_data" : products_list
             }
 

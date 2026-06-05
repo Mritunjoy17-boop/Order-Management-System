@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Env
+env/
+venv/
+
+# Environment Variables
+.env
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Uploads
+uploads/
+
+# Generated PDFs
+uploads/PDFs/
+uploads/ZIPs/
+
+# OS files
+.DS_Store
+
+# MySQL dumps
+*.sql
+
+# Firebase
+firebase_key.json
+
+# Gunicorn PID
+*.pid
