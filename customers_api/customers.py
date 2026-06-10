@@ -161,10 +161,12 @@ async def get_customers(
         cursor.execute("""
             SELECT c.customer_id, c.business_name, c.phone_number,
                 c.city, r.region_name,r.region_id,
+                g.godown_name as warehouse_name,
                 COUNT(o.order_id) as total_orders
             FROM customers c
             LEFT JOIN orders o ON c.customer_id = o.customer_id
             LEFT JOIN regions r ON c.region_id = r.region_id
+            LEFT JOIN godowns g ON c.godown_id = g.godown_id
             WHERE c.is_active = 1
             GROUP BY c.customer_id
         """)
@@ -173,6 +175,7 @@ async def get_customers(
         cursor.execute("""
             SELECT c.customer_id, c.business_name, c.phone_number,
                 c.city, r.region_name, r.region_id,
+                g.godown_name as warehouse_name,
                 COUNT(o.order_id) as total_orders
             FROM customers c
 
@@ -185,6 +188,8 @@ async def get_customers(
 
             LEFT JOIN regions r 
                 ON c.region_id = r.region_id
+
+            LEFT JOIN godowns g ON c.godown_id = g.godown_id
 
             WHERE c.is_active = 1
             AND csa.sales_agent_mobile = %s
@@ -238,18 +243,20 @@ async def get_customer_detail(data: EachCustomerRequest,
     
     if is_admin:
         cursor.execute("""
-            SELECT c.*, r.region_name
+            SELECT c.*, g.godown_name as warehouse_name, r.region_name
             FROM customers c
             LEFT JOIN regions r ON c.region_id = r.region_id
+            JOIN godowns g on c.godown_id = g.godown_id
             WHERE c.customer_id = %s
         """, (data.customer_id,))
     else:
         cursor.execute("""
-        SELECT c.*, r.region_name
+        SELECT c.*, g.godown_name as warehouse_name, r.region_name
         FROM customers c
         LEFT JOIN regions r ON c.region_id = r.region_id
         JOIN customer_sales_agents csa 
             ON c.customer_id = csa.customer_id
+        JOIN godowns g ON c.godown_id = g.godown_id
         WHERE c.customer_id = %s
         AND csa.sales_agent_mobile = %s
      """, (data.customer_id, sales_agent_mobile))
